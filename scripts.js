@@ -5,9 +5,12 @@ const numbers_DOM = document.querySelectorAll("#number");
 const operators_DOM = document.querySelectorAll("#operator");
 const equals_DOM = document.querySelector("#equals");
 const allClear_DOM = document.querySelector("#clear");
+const delete_DOM = document.querySelector("#delete");
 const decimal_DOM = document.querySelector("#decimal");
+const sign_DOM = document.querySelector("#sign");
 const screenTop_DOM = document.querySelector(".screen-top");
 const screenBottom_DOM = document.querySelector(".screen-bottom");
+const btnsExceptClear = Array.from(document.getElementsByClassName("btn")).filter(n => n.id !== "clear");
 
 // Global Variables
 let num1 = "";
@@ -22,6 +25,7 @@ numbers_DOM.forEach(n => n.addEventListener("click", runOnNumberKey));
 operators_DOM.forEach(n => n.addEventListener("click", runOnOperatorKey));
 equals_DOM.addEventListener("click", runOnEqualsKey);
 allClear_DOM.addEventListener("click", fullReset);
+delete_DOM.addEventListener("click", deleteFromScreen);
 
 // --- FUNCTION DECLARATIONS ---
 function runOnNumberKey(e) {
@@ -52,6 +56,7 @@ function runOnOperatorKey(e) {
       num2 = screenBottom_DOM.textContent;
       nextOperator = e.target.value;
       num1 = operate(+num1, +num2, currOperator);
+      if (num1 === null) return;
       screenBottom_DOM.textContent = num1;
       screenTop_DOM.textContent = `${num1} ${currOperator}`;
       screenHasToBeReset = true;
@@ -69,7 +74,6 @@ function runOnOperatorKey(e) {
     currOperator = e.target.value;
     screenTop_DOM.textContent = `${num1} ${currOperator}`;
   }
-
 }
 
 function runOnEqualsKey() {
@@ -82,6 +86,7 @@ function runOnEqualsKey() {
     num2 = screenBottom_DOM.textContent;
     screenTop_DOM.textContent = `${+num1} ${currOperator} ${+num2}`;
     num1 = operate(+num1, +num2, currOperator);
+    if (num1 === null) return;
     screenBottom_DOM.textContent = num1;
     num2 = "";
     currOperator = null;
@@ -89,33 +94,48 @@ function runOnEqualsKey() {
   }
 }
 
-function dispResultOnScreen() {
-  screenBottom_DOM.textContent = num1;
-}
-
 function fullReset() {
   num1 = "";
   num2 = "";
   currOperator = null;
   nextOperator = null;
+  screenHasToBeReset = false;
   screenTop_DOM.textContent = "\xa0";
   screenBottom_DOM.textContent = "\xa0";
+  btnsExceptClear.forEach(n => n.disabled = false);
+}
+
+function deleteFromScreen() {
+  if (screenBottom_DOM.textContent === "\xa0" || screenHasToBeReset) return
+  screenBottom_DOM.textContent = screenBottom_DOM.textContent.slice(0, -1);
 }
 
 function operate(num1, num2, op) {
+  let n;
   switch (op) {
     case "+":
-      return add(num1, num2);
+      n = add(num1, num2);
+      break;
     case "-":
-      return subtract(num1, num2);
+      n = subtract(num1, num2);
+      break;
     case "×":
-      return multiply(num1, num2);
+      n = multiply(num1, num2);
+      break;
     case "/":
-      return divide(num1, num2);
+      n = divide(num1, num2);
+      break;
     default:
       console.log("Invalid Operator");
       return;
   }
+  return truncateResult(n);
+}
+// Shortens long digit output to prevent overflow
+function truncateResult(n) {
+  if (n === null) return null;
+  if (n.toString().length > 10) n = n.toString().slice(0,15);
+  return +n;
 }
 
 function add(num1, num2) {
@@ -137,7 +157,7 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
-  // if (num2 === 0) 
+  if (num2 === 0) return runOnDivisionByZero();
   const result = num1 /= num2;
   updateVariables();
   return result;
@@ -146,4 +166,11 @@ function divide(num1, num2) {
 function updateVariables() {
   num2 = "";
   currOperator = nextOperator;
+}
+
+function runOnDivisionByZero() {
+  screenTop_DOM.textContent = "\xa0";
+  screenBottom_DOM.textContent = "nope";
+  btnsExceptClear.forEach(n => n.disabled = true);
+  return null;
 }

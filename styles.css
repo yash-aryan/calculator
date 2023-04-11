@@ -26,15 +26,8 @@ h1 {
 	font-size: 2rem;
 }
 
-.main-container,
-.screen-container {
-	gap: 1rem;
-}
-
 .main-container {
-	padding: 1rem;
 	gap: 1rem;
-	border-radius: 16px;
 }
 
 .screen-container,
@@ -43,8 +36,13 @@ h1 {
 	flex-direction: row;
 }
 
+.screen-container,
+.button-container {
+	width: 25rem;
+}
+
 .screen {
-  padding-right: 2rem;
+	width: inherit;
 	text-align: right;
 }
 
@@ -56,20 +54,21 @@ h1 {
 	color: #eee;
 }
 
+.screen-top,
+.screen-bottom {
+	padding-right: 2rem;
+	width: inherit;
+}
+
 .screen-top {
-	color: #777;
+	color: #999;
 }
 
 .screen-bottom {
 	font-size: 3rem;
 }
 
-#equals {
-	max-width: 6rem;
-}
-
 .button-container {
-	width: 25rem;
 	height: 25rem;
 }
 
@@ -80,14 +79,15 @@ h1 {
 	font-size: inherit;
 }
 
-.btn.btn-coloured {
-	color: #f44b12;
-}
-
 .btn {
 	margin: 8px 0 0 8px;
 	border-radius: 16px;
-	background-color: #303030;
+	border: 1px solid hsla(0, 0%, 47%, 0.5);
+}
+
+.btn.btn-coloured {
+	color: #f44b12;
+	border: 1px solid hsla(15, 91%, 51%, 0.5);
 }
 
 .btn:hover {
@@ -95,10 +95,23 @@ h1 {
 }
 
 .btn:active {
-	background-color: #082032;
+	background-color: hsla(0, 0%, 0%, 0.2);
 }
 
 .btn:disabled {
-	background-color: #0820325f;
-	color: #909090;
+	opacity: 50%;
+	border: none;
+	cursor: default;
+}
+
+#equals {
+	flex-basis: 28%;
+}
+
+.footer {
+	font-size: 1rem;
+}
+
+.footer > a {
+	color: #eee;
 }
