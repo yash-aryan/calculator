@@ -26,6 +26,8 @@ operators_DOM.forEach(n => n.addEventListener("click", runOnOperatorKey));
 equals_DOM.addEventListener("click", runOnEqualsKey);
 allClear_DOM.addEventListener("click", fullReset);
 delete_DOM.addEventListener("click", deleteFromScreen);
+sign_DOM.addEventListener("click", changeSign);
+decimal_DOM.addEventListener("click", addDecimal);
 
 // --- FUNCTION DECLARATIONS ---
 function runOnNumberKey(e) {
@@ -106,8 +108,19 @@ function fullReset() {
 }
 
 function deleteFromScreen() {
-  if (screenBottom_DOM.textContent === "\xa0" || screenHasToBeReset) return
-  screenBottom_DOM.textContent = screenBottom_DOM.textContent.slice(0, -1);
+  if (screenBottom_DOM.textContent === "\xa0" || screenHasToBeReset) return;
+  else if (+screenBottom_DOM.textContent < 0 && screenBottom_DOM.textContent.length === 3) screenBottom_DOM.textContent = "\xa0";
+  else screenBottom_DOM.textContent = screenBottom_DOM.textContent.slice(0, -1);
+}
+
+function changeSign() {
+  screenBottom_DOM.textContent = `\xa0${+screenBottom_DOM.textContent * -1}`;
+}
+
+function addDecimal() {
+  if (screenBottom_DOM.textContent.includes(".")) return;
+  else if (screenBottom_DOM.textContent === "\xa0") screenBottom_DOM.textContent = "0";
+  screenBottom_DOM.textContent += ".";
 }
 
 function operate(num1, num2, op) {
@@ -134,8 +147,8 @@ function operate(num1, num2, op) {
 // Shortens long digit output to prevent overflow
 function truncateResult(n) {
   if (n === null) return null;
-  if (n.toString().length > 10) n = n.toString().slice(0,15);
-  return +n;
+  if (n.toString().length > 10) n = n.toString().slice(0, 15);
+  return `\xa0${n}`;
 }
 
 function add(num1, num2) {
